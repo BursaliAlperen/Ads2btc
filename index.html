@@ -3,27 +3,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Ads2BTC</title>
+    <title>Ads2BTC - BTC Kazan</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <h1>BTC Adresini Gir ve Reklam İzle</h1>
-    <form action="/submit" method="post">
-        <input type="text" name="btc" placeholder="BTC adresin" required>
-        <button type="submit">Reklamı İzle</button>
-    </form>
-
-    <!-- Reklam Alanı -->
-    <div id="ad-container">
-        <script type="text/javascript">
-            atOptions = {
-                'key' : '5bc780c5b39063e906e3334938079c84',
-                'format' : 'iframe',
-                'height' : 90,
-                'width' : 728,
-                'params' : {}
-            };
-        </script>
-        <script type="text/javascript" src="//www.highperformanceformat.com/5bc780c5b39063e906e3334938079c84/invoke.js"></script>
-    </div>
+    <header>
+        <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="BTC Logo">
+        <h1>Ads2BTC</h1>
+    </header>
+    <main>
+        <p>BTC Adresinizi Girin:</p>
+        <input type="text" id="btcAddress" placeholder="1A1zP1...">
+        <div id="balance">Kazanç: 0.0000000 BTC</div>
+        <div id="ads">
+            <!-- Adsterra Reklam Kodu Buraya -->
+            <script type="text/javascript">
+                atOptions = {
+                    'key': '5bc780c5b39063e906e3334938079c84',
+                    'format': 'iframe',
+                    'height': 90,
+                    'width': 728,
+                    'params': {}
+                };
+            </script>
+            <script type="text/javascript" src="//www.highperformanceformat.com/5bc780c5b39063e906e3334938079c84/invoke.js"></script>
+        </div>
+    </main>
+    <footer>
+        <p>© 2025 Ads2BTC - Reklam İzle BTC Kazan</p>
+    </footer>
+    <script>
+        let balance = 0;
+        setInterval(() => {
+            balance += 0.0000001;
+            document.getElementById("balance").innerText = "Kazanç: " + balance.toFixed(7) + " BTC";
+        }, 60000); // her 60 saniyede 0.0000001 BTC
+    </script>
 </body>
 </html>

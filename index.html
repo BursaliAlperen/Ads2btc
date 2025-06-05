@@ -1,43 +1,71 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Ads2BTC - BTC Kazan</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url('https://images.unsplash.com/photo-1611974789855-9c2a0a6f1b5b') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+        .container {
+            background-color: rgba(0,0,0,0.7);
+            border-radius: 10px;
+            padding: 20px;
+            display: inline-block;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            border: none;
+        }
+        button {
+            background-color: #f7931a;
+            color: white;
+            cursor: pointer;
+        }
+        .btc-amount {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="BTC Logo">
-        <h1>Ads2BTC</h1>
-    </header>
-    <main>
-        <p>BTC Adresinizi Girin:</p>
-        <input type="text" id="btcAddress" placeholder="1A1zP1...">
-        <div id="balance">Kazanç: 0.0000000 BTC</div>
-        <div id="ads">
-            <!-- Adsterra Reklam Kodu Buraya -->
-            <script type="text/javascript">
-                atOptions = {
-                    'key': '5bc780c5b39063e906e3334938079c84',
-                    'format': 'iframe',
-                    'height': 90,
-                    'width': 728,
-                    'params': {}
-                };
-            </script>
-            <script type="text/javascript" src="//www.highperformanceformat.com/5bc780c5b39063e906e3334938079c84/invoke.js"></script>
+    <div class="container">
+        <h1>🎯 BTC Kazan - Ads2BTC</h1>
+        <form method="POST" action="/set_wallet">
+            <input type="text" name="wallet" placeholder="BTC Cüzdan Adresin" required>
+            <button type="submit">Cüzdanı Kaydet</button>
+        </form>
+
+        <div class="btc-amount">
+            Toplam Kazanç: <strong>{{ satoshis }}</strong> satoshi
         </div>
-    </main>
-    <footer>
-        <p>© 2025 Ads2BTC - Reklam İzle BTC Kazan</p>
-    </footer>
-    <script>
-        let balance = 0;
-        setInterval(() => {
-            balance += 0.0000001;
-            document.getElementById("balance").innerText = "Kazanç: " + balance.toFixed(7) + " BTC";
-        }, 60000); // her 60 saniyede 0.0000001 BTC
+
+        <form method="POST" action="/withdraw">
+            <button type="submit">💸 Ödeme Talebi Gönder</button>
+        </form>
+    </div>
+
+    <!-- Reklam 1 -->
+    <script type='text/javascript' src='//pl26850065.profitableratecpm.com/21/0c/61/210c612e47d26f671d85c449bfb56fd3.js'></script>
+
+    <!-- Reklam 2 -->
+    <script type="text/javascript">
+        atOptions = {
+            'key' : '18f7f90658486a12664cdb18c241e893',
+            'format' : 'iframe',
+            'height' : 50,
+            'width' : 320,
+            'params' : {}
+        };
     </script>
+    <script type="text/javascript" src="//www.highperformanceformat.com/18f7f90658486a12664cdb18c241e893/invoke.js"></script>
+
 </body>
 </html>

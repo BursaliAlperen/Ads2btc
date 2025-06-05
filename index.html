@@ -1,61 +1,49 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Ads2BTC - BTC Kazan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ads2BTC</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: url('https://images.unsplash.com/photo-1611974789855-9c2a0a6f1b5b') no-repeat center center fixed;
-            background-size: cover;
-            color: white;
+            background: #0f0f0f url('https://cryptologos.cc/logos/bitcoin-btc-logo.png') no-repeat center center fixed;
+            background-size: 20%;
+            color: #fff;
             text-align: center;
-            padding: 30px;
+            padding: 50px;
         }
-        .container {
-            background-color: rgba(0,0,0,0.7);
-            border-radius: 10px;
-            padding: 20px;
-            display: inline-block;
-        }
-        input, button {
+        input[type=text] {
             padding: 10px;
-            margin: 5px;
-            border-radius: 5px;
-            border: none;
+            width: 300px;
         }
         button {
-            background-color: #f7931a;
-            color: white;
-            cursor: pointer;
+            padding: 10px 20px;
+            margin-top: 10px;
         }
-        .btc-amount {
-            font-size: 24px;
+        .info {
             margin-top: 20px;
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🎯 BTC Kazan - Ads2BTC</h1>
-        <form method="POST" action="/set_wallet">
-            <input type="text" name="wallet" placeholder="BTC Cüzdan Adresin" required>
-            <button type="submit">Cüzdanı Kaydet</button>
-        </form>
-
-        <div class="btc-amount">
-            Toplam Kazanç: <strong>{{ satoshis }}</strong> satoshi
-        </div>
-
-        <form method="POST" action="/withdraw">
-            <button type="submit">💸 Ödeme Talebi Gönder</button>
-        </form>
+    <h1>BTC Kazan</h1>
+    <form method="POST" action="/save_wallet">
+        <input type="text" name="wallet" placeholder="BTC Cüzdan Adresi" required>
+        <br>
+        <button type="submit">Kaydet</button>
+    </form>
+    <div class="info">
+        Her 1 dakikada 1 reklam izleyerek 0.0000001 BTC kazanırsınız.<br>
+        Minimum ödeme: 0.000001 BTC
     </div>
 
-    <!-- Reklam 1 -->
-    <script type='text/javascript' src='//pl26850065.profitableratecpm.com/21/0c/61/210c612e47d26f671d85c449bfb56fd3.js'></script>
-
-    <!-- Reklam 2 -->
+    <!-- Reklam Kodları -->
+    <script type="text/javascript" src="//pl26850065.profitableratecpm.com/21/0c/61/210c612e47d26f671d85c449bfb56fd3.js"></script>
     <script type="text/javascript">
         atOptions = {
             'key' : '18f7f90658486a12664cdb18c241e893',
@@ -66,6 +54,5 @@
         };
     </script>
     <script type="text/javascript" src="//www.highperformanceformat.com/18f7f90658486a12664cdb18c241e893/invoke.js"></script>
-
 </body>
 </html>

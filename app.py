@@ -1,19 +1,29 @@
-
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, send_file, request, jsonify
+import time
 
 app = Flask(__name__)
 
-@app.route('/', methods=['GET', 'POST'])
+clicks = 0
+btc_per_click = 0.0000001
+wallet = "BURAYA_BTC_ADRESİNİ_YAZ"
+
+@app.route("/", methods=["GET", "HEAD"])
 def index():
-    if request.method == 'POST':
-        btc_address = request.form.get('btc')
-        if btc_address:
-            return redirect(url_for('thank_you'))
-    return render_template('index.html')
+    return send_file("index.html")
 
-@app.route('/thankyou')
-def thank_you():
-    return "<h1>Teşekkürler! BTC adresiniz kaydedildi.</h1>"
+@app.route("/click", methods=["POST"])
+def click():
+    global clicks
+    clicks += 1
+    return jsonify({"clicks": clicks, "reward": btc_per_click})
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=10000)
+@app.route("/stats", methods=["GET"])
+def stats():
+    return jsonify({
+        "total_clicks": clicks,
+        "btc_per_click": btc_per_click,
+        "total_reward_btc": clicks * btc_per_click
+    })
+
+if __name__ == "__main__":
+    app.run(debug=True)

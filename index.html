@@ -3,110 +3,74 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Earn Free BTC Every Minute</title>
+    <title>BTC Click & Earn</title>
     <style>
-        body {
-            background: #f4f4f4;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 20px;
-        }
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            display: inline-block;
-            margin-top: 20px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        input, button {
-            padding: 10px;
-            margin: 10px;
-        }
-        .info {
-            margin-top: 20px;
-            font-size: 14px;
-            color: #555;
-        }
-        .ads {
-            margin-top: 20px;
-        }
+        body { font-family: Arial; text-align: center; background: white; }
+        #container { max-width: 600px; margin: auto; padding: 20px; border-radius: 10px; background: #f0f0f0; }
+        input, button { padding: 10px; margin: 10px; }
+        .info-box { background: #fff; padding: 15px; border-radius: 8px; margin-top: 20px; }
+        iframe { margin: 10px auto; display: block; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Earn Free Bitcoin Every Minute!</h2>
-        <input type="text" id="wallet" placeholder="Enter your BTC Wallet Address">
-        <button onclick="saveWallet()">Save</button>
-        <div class="info" id="status"></div>
-        <h3>Balance: <span id="balance">0</span> BTC</h3>
-        <h4>Next reward in <span id="countdown">60</span> seconds</h4>
-        <div class="info">
-            💡 How it works: Enter your Bitcoin wallet address, stay on the page, and earn 0.0000001 BTC every 60 seconds. Once your balance reaches 0.000001 BTC, a withdrawal request is automatically generated.
-        </div>
-        <div class="ads">
-            <!-- Ads scripts injected below -->
-            <script type="text/javascript">
-                atOptions = {
-                    'key' : '23f77d01dc2dc4a7ed5e615fbffb3517',
-                    'format' : 'iframe',
-                    'height' : 250,
-                    'width' : 300,
-                    'params' : {}
-                };
-            </script>
-            <script src="//www.highperformanceformat.com/23f77d01dc2dc4a7ed5e615fbffb3517/invoke.js"></script>
-            <script type="text/javascript">
-                atOptions = {
-                    'key' : '5bc780c5b39063e906e3334938079c84',
-                    'format' : 'iframe',
-                    'height' : 90,
-                    'width' : 728,
-                    'params' : {}
-                };
-            </script>
-            <script src="//www.highperformanceformat.com/5bc780c5b39063e906e3334938079c84/invoke.js"></script>
-        </div>
-    </div>
-    <script>
-        let countdown = 60;
-        let balance = parseFloat(localStorage.getItem("balance") || "0");
-        let wallet = localStorage.getItem("wallet") || "";
+    <div id="container">
+        <h1>BTC Click & Earn</h1>
+        <input type="text" id="wallet" placeholder="Enter your BTC wallet">
+        <button onclick="saveWallet()">Save Wallet</button>
+        <p>Balance: <span id="balance">0</span> BTC</p>
+        <p>Next claim in: <span id="timer">60</span> seconds</p>
 
-        document.getElementById("wallet").value = wallet;
-        document.getElementById("balance").innerText = balance.toFixed(7);
+        <div class="info-box">
+            <h3>How it Works?</h3>
+            <p>Enter your BTC address and keep the page open. Every 60 seconds, you earn 0.0000001 BTC.</p>
+            <p>When your balance reaches 0.000001 BTC, a withdrawal request is automatically sent to admin.</p>
+        </div>
+
+        <!-- Ads -->
+        <iframe src="//www.highperformanceformat.com/23f77d01dc2dc4a7ed5e615fbffb3517/invoke.js" width="300" height="250"></iframe>
+        <iframe src="//www.highperformanceformat.com/5bc780c5b39063e906e3334938079c84/invoke.js" width="728" height="90"></iframe>
+        <iframe src="//www.highperformanceformat.com/241c3db5e2d11241cd844f31d39c80fe/invoke.js" width="160" height="600"></iframe>
+    </div>
+
+    <script>
+        let timer = 60;
+        let wallet = localStorage.getItem("wallet");
+
+        if (wallet) {
+            document.getElementById("wallet").value = wallet;
+            fetchBalance();
+            setInterval(fetchBalance, 60000);
+        }
 
         function saveWallet() {
-            const walletInput = document.getElementById("wallet").value;
-            if (walletInput.length > 0) {
-                localStorage.setItem("wallet", walletInput);
-                document.getElementById("status").innerText = "Wallet saved!";
+            wallet = document.getElementById("wallet").value;
+            if (!wallet) return;
+            localStorage.setItem("wallet", wallet);
+            fetch("/save_address", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: "wallet=" + encodeURIComponent(wallet)
+            }).then(() => fetchBalance());
+        }
+
+        function fetchBalance() {
+            if (!wallet) return;
+            fetch("/get_balance?wallet=" + encodeURIComponent(wallet))
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById("balance").innerText = data.balance;
+                });
+        }
+
+        setInterval(() => {
+            if (timer > 0) {
+                timer--;
+                document.getElementById("timer").innerText = timer;
             } else {
-                document.getElementById("status").innerText = "Please enter a valid wallet address.";
+                timer = 60;
+                fetchBalance();
             }
-        }
-
-        function tick() {
-            countdown -= 1;
-            document.getElementById("countdown").innerText = countdown;
-            if (countdown <= 0) {
-                countdown = 60;
-                balance += 0.0000001;
-                localStorage.setItem("balance", balance);
-                document.getElementById("balance").innerText = balance.toFixed(7);
-
-                if (balance >= 0.000001) {
-                    fetch("/withdraw", {
-                        method: "POST",
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({wallet: wallet, amount: balance})
-                    });
-                    balance = 0;
-                    localStorage.setItem("balance", balance);
-                }
-            }
-        }
-        setInterval(tick, 1000);
+        }, 1000);
     </script>
 </body>
 </html>

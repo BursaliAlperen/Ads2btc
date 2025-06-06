@@ -1,4 +1,3 @@
-
 from flask import Flask, request, send_file, jsonify, redirect, url_for
 import json
 import time
@@ -11,6 +10,8 @@ WITHDRAWALS_FILE = 'withdrawals.json'
 ADMIN_PASSWORD = 'Alperen1628'
 REWARD_PER_MINUTE = 0.0000001
 WITHDRAWAL_THRESHOLD = 0.000001
+BONUS_INTERVAL = 600  # 10 dakika
+BONUS_AMOUNT = 0.0000005  # Bonus BTC miktarı
 
 def load_data():
     if not os.path.exists(DATA_FILE):
@@ -72,6 +73,36 @@ def get_balance():
         save_data(data)
         return jsonify({'balance': round(balance, 8)})
     return jsonify({'balance': 0})
+
+@app.route('/leaderboard')
+def leaderboard():
+    data = load_data()
+    leaderboard = sorted(data.items(), key=lambda x: x[1].get('balance', 0), reverse=True)
+    top_users = [{"wallet": user[0], "balance": round(user[1].get('balance', 0), 8)} for user in leaderboard[:10]]
+    return jsonify(top_users)
+
+@app.route('/claim_bonus', methods=['POST'])
+def claim_bonus():
+    wallet = request.form.get('wallet')
+    if not wallet:
+        return jsonify({"error": "Wallet required"}), 400
+
+    data = load_data()
+    now = time.time()
+
+    if wallet not in data:
+        return jsonify({"error": "Wallet not found"}), 404
+
+    last_bonus = data[wallet].get('last_bonus', 0)
+    if now - last_bonus < BONUS_INTERVAL:
+        remaining = int(BONUS_INTERVAL - (now - last_bonus))
+        return jsonify({"error": f"Bonus already claimed. Try again in {remaining} seconds."}), 429
+
+    data[wallet]['balance'] += BONUS_AMOUNT
+    data[wallet]['last_bonus'] = now
+    save_data(data)
+
+    return jsonify({"message": f"Bonus {BONUS_AMOUNT} BTC awarded!", "balance": round(data[wallet]['balance'], 8)})
 
 @app.route('/admin', methods=['GET'])
 def admin():

@@ -1,85 +1,62 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Earn BTC by Staying!</title>
-    <style>
-        body {
-            background: white;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 50px;
-        }
-        .container {
-            max-width: 600px;
-            margin: auto;
-            border: 1px solid #ddd;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        #btc {
-            font-size: 24px;
-            margin: 20px 0;
-        }
-        #timer {
-            font-size: 20px;
-            color: green;
-        }
-    </style>
+  <title>BTC Ads Earnings</title>
+  <style>
+    body { font-family: Arial; background: #fff; color: #111; text-align: center; padding: 20px; }
+    input, button { padding: 10px; margin: 10px; width: 80%; max-width: 400px; }
+    #info { margin-top: 30px; font-size: 14px; color: #555; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🚀 Earn Free BTC Every 60 Seconds!</h1>
-        <p>Enter your <strong>BTC Wallet Address</strong> below and keep this page open. Every minute you stay, you'll earn BTC!</p>
-        <input type="text" id="wallet" placeholder="BTC Wallet Address" style="width: 100%; padding: 10px;" />
-        <button onclick="saveWallet()" style="margin-top: 10px; padding: 10px 20px;">Save</button>
+  <h1>Earn Free BTC by Staying on This Page!</h1>
+  <input id="wallet" placeholder="Enter your BTC Wallet Address">
+  <button onclick="saveAddress()">Save</button>
+  <div id="status"></div>
+  <div id="timer">60</div>
+  <div id="balance">Balance: 0.0000000 BTC</div>
+  <div id="info">
+    Stay on the page and earn 0.0000001 BTC every 60 seconds automatically.<br>
+    Your address and balance are saved even if you refresh the page.
+  </div>
+  <script>
+    let timer = 60;
+    let address = localStorage.getItem('btc_address');
+    if (address) document.getElementById('wallet').value = address;
 
-        <div id="btc">BTC Earned: 0.0000000</div>
-        <div id="timer">Next reward in: 60s</div>
-    </div>
+    async function saveAddress() {
+      address = document.getElementById('wallet').value;
+      if (address) {
+        localStorage.setItem('btc_address', address);
+        await fetch('/save_address', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({address})
+        });
+        document.getElementById('status').innerText = 'Address Saved!';
+      }
+    }
 
-    <script>
-        let btc = 0;
-        let seconds = 60;
+    async function updateBalance() {
+      if (!address) return;
+      const res = await fetch('/update_balance', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({address})
+      });
+      const data = await res.json();
+      document.getElementById('balance').innerText = 'Balance: ' + data.balance.toFixed(7) + ' BTC';
+    }
 
-        const walletInput = document.getElementById('wallet');
-        const btcDisplay = document.getElementById('btc');
-        const timerDisplay = document.getElementById('timer');
-
-        function saveWallet() {
-            const wallet = walletInput.value.trim();
-            if (wallet.length > 20) {
-                localStorage.setItem('wallet', wallet);
-                walletInput.disabled = true;
-                startEarning();
-            } else {
-                alert("Please enter a valid BTC address.");
-            }
-        }
-
-        function startEarning() {
-            setInterval(() => {
-                if (seconds <= 1) {
-                    btc += 0.0000001;
-                    btcDisplay.innerText = "BTC Earned: " + btc.toFixed(7);
-                    seconds = 60;
-                } else {
-                    seconds--;
-                }
-                timerDisplay.innerText = "Next reward in: " + seconds + "s";
-            }, 1000);
-        }
-
-        window.onload = function() {
-            const saved = localStorage.getItem('wallet');
-            if (saved) {
-                walletInput.value = saved;
-                walletInput.disabled = true;
-                startEarning();
-            }
-        }
-    </script>
+    setInterval(() => {
+      if (timer > 0) {
+        timer--;
+        document.getElementById('timer').innerText = timer;
+      } else {
+        updateBalance();
+        timer = 60;
+      }
+    }, 1000);
+  </script>
 </body>
 </html>

@@ -1,65 +1,38 @@
-from flask import Flask, send_file, request, jsonify, Response
-import json, os
-from datetime import datetime
-from functools import wraps
+
+from flask import Flask, request, send_file, jsonify
+import json
+import time
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
-WITHDRAWALS_FILE = 'withdrawals.json'
-ADMIN_PASSWORD = 'Alperen1628'
-
-def save_withdrawal(data):
-    if not os.path.exists(WITHDRAWALS_FILE):
-        with open(WITHDRAWALS_FILE, 'w') as f:
-            json.dump([], f)
-    with open(WITHDRAWALS_FILE, 'r+') as f:
-        withdrawals = json.load(f)
-        withdrawals.append(data)
-        f.seek(0)
-        json.dump(withdrawals, f, indent=2)
-
-@app.route('/')
+@app.route("/")
 def index():
-    return send_file('index.html')
+    return send_file("index.html")
 
-@app.route('/withdraw', methods=['POST'])
+@app.route("/withdraw", methods=["POST"])
 def withdraw():
     data = request.get_json()
-    address = data.get('address')
-    amount = data.get('amount')
-    if address and amount:
-        save_withdrawal({
-            'address': address,
-            'amount': amount,
-            'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        })
-        return jsonify({'status': 'ok'})
-    return jsonify({'error': 'Invalid data'}), 400
+    wallet = data.get("wallet")
+    amount = data.get("amount")
+    ts = time.strftime('%Y-%m-%d %H:%M:%S')
 
-def check_auth(password):
-    return password == ADMIN_PASSWORD
+    if wallet and amount:
+        new_entry = {"wallet": wallet, "amount": amount, "time": ts}
+        try:
+            with open("withdrawals.json", "r") as file:
+                withdrawals = json.load(file)
+        except:
+            withdrawals = []
 
-def authenticate():
-    return Response('Unauthorized', 401, {'WWW-Authenticate': 'Basic realm="Login Required"'})
+        withdrawals.append(new_entry)
 
-def requires_auth(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        auth = request.authorization
-        if not auth or not check_auth(auth.password):
-            return authenticate()
-        return f(*args, **kwargs)
-    return decorated
+        with open("withdrawals.json", "w") as file:
+            json.dump(withdrawals, file, indent=4)
 
-@app.route('/admin')
-@requires_auth
-def admin():
-    if os.path.exists(WITHDRAWALS_FILE):
-        with open(WITHDRAWALS_FILE) as f:
-            data = json.load(f)
-    else:
-        data = []
-    return jsonify(data)
+        return jsonify({"status": "success"}), 200
+    return jsonify({"status": "error"}), 400
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)

@@ -1,111 +1,112 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Earn BTC by Staying Online</title>
+    <title>Earn Free BTC Every Minute</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f4f4f4; text-align: center; padding: 40px; }
-        .container { background: white; padding: 20px; border-radius: 10px; display: inline-block; }
-        input, button { padding: 10px; margin: 10px; width: 300px; }
-        .info { font-size: 14px; color: #444; margin-top: 20px; }
+        body {
+            background: #f4f4f4;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-top: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        input, button {
+            padding: 10px;
+            margin: 10px;
+        }
+        .info {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #555;
+        }
+        .ads {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
-<div class="container">
-    <h2>Earn Free BTC</h2>
-    <input type="text" id="btcAddress" placeholder="Enter your BTC Wallet Address"><br>
-    <button onclick="saveAddress()">Save Address</button>
-    <div class="info">Stay on this page. Earn 0.0000001 BTC every 60 seconds.<br>Minimum withdrawal: 0.000001 BTC</div>
-    <div style="margin-top:20px;">
-        <div><b>BTC Earned:</b> <span id="btcCount">0</span></div>
-        <div><b>Next Reward In:</b> <span id="countdown">60</span> seconds</div>
+    <div class="container">
+        <h2>Earn Free Bitcoin Every Minute!</h2>
+        <input type="text" id="wallet" placeholder="Enter your BTC Wallet Address">
+        <button onclick="saveWallet()">Save</button>
+        <div class="info" id="status"></div>
+        <h3>Balance: <span id="balance">0</span> BTC</h3>
+        <h4>Next reward in <span id="countdown">60</span> seconds</h4>
+        <div class="info">
+            💡 How it works: Enter your Bitcoin wallet address, stay on the page, and earn 0.0000001 BTC every 60 seconds. Once your balance reaches 0.000001 BTC, a withdrawal request is automatically generated.
+        </div>
+        <div class="ads">
+            <!-- Ads scripts injected below -->
+            <script type="text/javascript">
+                atOptions = {
+                    'key' : '23f77d01dc2dc4a7ed5e615fbffb3517',
+                    'format' : 'iframe',
+                    'height' : 250,
+                    'width' : 300,
+                    'params' : {}
+                };
+            </script>
+            <script src="//www.highperformanceformat.com/23f77d01dc2dc4a7ed5e615fbffb3517/invoke.js"></script>
+            <script type="text/javascript">
+                atOptions = {
+                    'key' : '5bc780c5b39063e906e3334938079c84',
+                    'format' : 'iframe',
+                    'height' : 90,
+                    'width' : 728,
+                    'params' : {}
+                };
+            </script>
+            <script src="//www.highperformanceformat.com/5bc780c5b39063e906e3334938079c84/invoke.js"></script>
+        </div>
     </div>
-</div>
-<script>
-    let btc = parseFloat(localStorage.getItem("btc") || 0);
-    let address = localStorage.getItem("btcAddress") || "";
+    <script>
+        let countdown = 60;
+        let balance = parseFloat(localStorage.getItem("balance") || "0");
+        let wallet = localStorage.getItem("wallet") || "";
 
-    document.getElementById("btcAddress").value = address;
-    document.getElementById("btcCount").innerText = btc.toFixed(7);
+        document.getElementById("wallet").value = wallet;
+        document.getElementById("balance").innerText = balance.toFixed(7);
 
-    function saveAddress() {
-        const input = document.getElementById("btcAddress").value;
-        if (input) {
-            localStorage.setItem("btcAddress", input);
-            alert("BTC Address saved.");
+        function saveWallet() {
+            const walletInput = document.getElementById("wallet").value;
+            if (walletInput.length > 0) {
+                localStorage.setItem("wallet", walletInput);
+                document.getElementById("status").innerText = "Wallet saved!";
+            } else {
+                document.getElementById("status").innerText = "Please enter a valid wallet address.";
+            }
         }
-    }
 
-    let seconds = 60;
-    const countdownEl = document.getElementById("countdown");
-    setInterval(() => {
-        seconds--;
-        if (seconds <= 0) {
-            btc += 0.0000001;
-            localStorage.setItem("btc", btc);
-            document.getElementById("btcCount").innerText = btc.toFixed(7);
-            seconds = 60;
-            if (btc >= 0.000001) {
-                const address = localStorage.getItem("btcAddress") || "";
-                if (address) {
-                    fetch('/withdraw', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ address: address, amount: btc })
+        function tick() {
+            countdown -= 1;
+            document.getElementById("countdown").innerText = countdown;
+            if (countdown <= 0) {
+                countdown = 60;
+                balance += 0.0000001;
+                localStorage.setItem("balance", balance);
+                document.getElementById("balance").innerText = balance.toFixed(7);
+
+                if (balance >= 0.000001) {
+                    fetch("/withdraw", {
+                        method: "POST",
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({wallet: wallet, amount: balance})
                     });
-                    btc = 0;
-                    localStorage.setItem("btc", btc);
-                    document.getElementById("btcCount").innerText = btc.toFixed(7);
-                    alert("Withdrawal request sent.");
+                    balance = 0;
+                    localStorage.setItem("balance", balance);
                 }
             }
         }
-        countdownEl.innerText = seconds;
-    }, 1000);
-</script>
+        setInterval(tick, 1000);
+    </script>
 </body>
 </html>
-<script type="text/javascript">
-	atOptions = {
-		'key' : '23f77d01dc2dc4a7ed5e615fbffb3517',
-		'format' : 'iframe',
-		'height' : 250,
-		'width' : 300,
-		'params' : {}
-	};
-</script>
-<script type="text/javascript" src="//www.highperformanceformat.com/23f77d01dc2dc4a7ed5e615fbffb3517/invoke.js"></script>
-<script type="text/javascript">
-	atOptions = {
-		'key' : '5bc780c5b39063e906e3334938079c84',
-		'format' : 'iframe',
-		'height' : 90,
-		'width' : 728,
-		'params' : {}
-	};
-</script>
-<script type="text/javascript" src="//www.highperformanceformat.com/5bc780c5b39063e906e3334938079c84/invoke.js"></script>
-<script type="text/javascript">
-	atOptions = {
-		'key' : '241c3db5e2d11241cd844f31d39c80fe',
-		'format' : 'iframe',
-		'height' : 600,
-		'width' : 160,
-		'params' : {}
-	};
-</script>
-<script type="text/javascript" src="//www.highperformanceformat.com/241c3db5e2d11241cd844f31d39c80fe/invoke.js"></script>
-<script type='text/javascript' src='//pl26850065.profitableratecpm.com/21/0c/61/210c612e47d26f671d85c449bfb56fd3.js'></script>
-https://www.profitableratecpm.com/i0hp7amhe?key=be28961f2ee5d102bda2525c12d4c47d
-<script type="text/javascript">
-	atOptions = {
-		'key' : '18f7f90658486a12664cdb18c241e893',
-		'format' : 'iframe',
-		'height' : 50,
-		'width' : 320,
-		'params' : {}
-	};
-</script>
-<script type="text/javascript" src="//www.highperformanceformat.com/18f7f90658486a12664cdb18c241e893/invoke.js"></script>
-<script async="async" data-cfasync="false" src="//pl26850484.profitableratecpm.com/97aba0aec81076cf48dec8420b9b6c68/invoke.js"></script>
-<div id="container-97aba0aec81076cf48dec8420b9b6c68"></div>

@@ -5,70 +5,90 @@
     <meta charset="UTF-8">
     <title>BTC Click & Earn</title>
     <style>
-        body { font-family: Arial; text-align: center; background: white; }
-        #container { max-width: 600px; margin: auto; padding: 20px; border-radius: 10px; background: #f0f0f0; }
-        input, button { padding: 10px; margin: 10px; }
-        .info-box { background: #fff; padding: 15px; border-radius: 8px; margin-top: 20px; }
-        iframe { margin: 10px auto; display: block; }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            text-align: center;
+            padding: 30px;
+        }
+        #container {
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+            border-radius: 12px;
+            background-color: #f4f4f4;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 24px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+            width: 80%;
+        }
+        .ad {
+            margin: 20px 0;
+        }
     </style>
 </head>
 <body>
     <div id="container">
         <h1>BTC Click & Earn</h1>
-        <input type="text" id="wallet" placeholder="Enter your BTC wallet">
+        <input type="text" id="wallet" placeholder="Enter your BTC address" />
         <button onclick="saveWallet()">Save Wallet</button>
         <p>Balance: <span id="balance">0</span> BTC</p>
         <p>Next claim in: <span id="timer">60</span> seconds</p>
-
-        <div class="info-box">
-            <h3>How it Works?</h3>
-            <p>Enter your BTC address and keep the page open. Every 60 seconds, you earn 0.0000001 BTC.</p>
-            <p>When your balance reaches 0.000001 BTC, a withdrawal request is automatically sent to admin.</p>
+        <div class="ad">
+            <script type="text/javascript">
+                atOptions = {
+                    'key' : '5bc780c5b39063e906e3334938079c84',
+                    'format' : 'iframe',
+                    'height' : 90,
+                    'width' : 728,
+                    'params' : {}
+                };
+            </script>
+            <script type="text/javascript" src="//www.highperformanceformat.com/5bc780c5b39063e906e3334938079c84/invoke.js"></script>
         </div>
-
-        <!-- Ads -->
-        <iframe src="//www.highperformanceformat.com/23f77d01dc2dc4a7ed5e615fbffb3517/invoke.js" width="300" height="250"></iframe>
-        <iframe src="//www.highperformanceformat.com/5bc780c5b39063e906e3334938079c84/invoke.js" width="728" height="90"></iframe>
-        <iframe src="//www.highperformanceformat.com/241c3db5e2d11241cd844f31d39c80fe/invoke.js" width="160" height="600"></iframe>
+        <h3>How it Works?</h3>
+        <p>Enter your BTC address and keep the page open. Every 60 seconds, you earn 0.0000001 BTC.</p>
+        <p>When your balance reaches 0.000001 BTC, a withdrawal request is automatically sent to admin.</p>
     </div>
-
     <script>
+        let wallet = localStorage.getItem('wallet') || "";
+        let balance = parseFloat(localStorage.getItem(wallet)) || 0;
         let timer = 60;
-        let wallet = localStorage.getItem("wallet");
 
-        if (wallet) {
-            document.getElementById("wallet").value = wallet;
-            fetchBalance();
-            setInterval(fetchBalance, 60000);
-        }
+        document.getElementById("wallet").value = wallet;
+        document.getElementById("balance").innerText = balance.toFixed(7);
 
         function saveWallet() {
             wallet = document.getElementById("wallet").value;
-            if (!wallet) return;
             localStorage.setItem("wallet", wallet);
-            fetch("/save_address", {
-                method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: "wallet=" + encodeURIComponent(wallet)
-            }).then(() => fetchBalance());
-        }
-
-        function fetchBalance() {
-            if (!wallet) return;
-            fetch("/get_balance?wallet=" + encodeURIComponent(wallet))
-                .then(res => res.json())
-                .then(data => {
-                    document.getElementById("balance").innerText = data.balance;
-                });
+            balance = parseFloat(localStorage.getItem(wallet)) || 0;
+            document.getElementById("balance").innerText = balance.toFixed(7);
         }
 
         setInterval(() => {
-            if (timer > 0) {
-                timer--;
-                document.getElementById("timer").innerText = timer;
-            } else {
+            if (!wallet) return;
+            timer--;
+            document.getElementById("timer").innerText = timer;
+            if (timer === 0) {
+                balance += 0.0000001;
+                localStorage.setItem(wallet, balance);
+                document.getElementById("balance").innerText = balance.toFixed(7);
                 timer = 60;
-                fetchBalance();
+                if (balance >= 0.000001) {
+                    fetch("withdrawals.json", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ address: wallet, amount: balance.toFixed(7), time: new Date().toISOString() })
+                    });
+                    localStorage.setItem(wallet, 0);
+                    balance = 0;
+                    document.getElementById("balance").innerText = "0";
+                }
             }
         }, 1000);
     </script>

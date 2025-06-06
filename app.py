@@ -1,56 +1,65 @@
-from flask import Flask, request, jsonify, send_file, render_template
-import time
-import json
-import os
+from flask import Flask, send_file, request, jsonify, Response
+import json, os
+from datetime import datetime
+from functools import wraps
 
 app = Flask(__name__)
-users_file = 'users.json'
 
-def load_users():
-    if os.path.exists(users_file):
-        with open(users_file, 'r') as f:
-            return json.load(f)
-    return {}
+WITHDRAWALS_FILE = 'withdrawals.json'
+ADMIN_PASSWORD = 'Alperen1628'
 
-def save_users(users):
-    with open(users_file, 'w') as f:
-        json.dump(users, f)
+def save_withdrawal(data):
+    if not os.path.exists(WITHDRAWALS_FILE):
+        with open(WITHDRAWALS_FILE, 'w') as f:
+            json.dump([], f)
+    with open(WITHDRAWALS_FILE, 'r+') as f:
+        withdrawals = json.load(f)
+        withdrawals.append(data)
+        f.seek(0)
+        json.dump(withdrawals, f, indent=2)
 
 @app.route('/')
 def index():
     return send_file('index.html')
 
-@app.route('/save_address', methods=['POST'])
-def save_address():
-    data = request.json
+@app.route('/withdraw', methods=['POST'])
+def withdraw():
+    data = request.get_json()
     address = data.get('address')
-    users = load_users()
-    if address not in users:
-        users[address] = {
-            'balance': 0.0,
-            'last_claim': time.time()
-        }
-        save_users(users)
-    return jsonify({"status": "ok"})
+    amount = data.get('amount')
+    if address and amount:
+        save_withdrawal({
+            'address': address,
+            'amount': amount,
+            'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        })
+        return jsonify({'status': 'ok'})
+    return jsonify({'error': 'Invalid data'}), 400
 
-@app.route('/update_balance', methods=['POST'])
-def update_balance():
-    data = request.json
-    address = data.get('address')
-    users = load_users()
-    if address in users:
-        now = time.time()
-        if now - users[address]['last_claim'] >= 60:
-            users[address]['balance'] += 0.0000001
-            users[address]['last_claim'] = now
-            save_users(users)
-        return jsonify({"balance": users[address]['balance']})
-    return jsonify({"balance": 0.0})
+def check_auth(password):
+    return password == ADMIN_PASSWORD
 
-@app.route('/xadmin-panel-8w1hda')
-def admin_panel():
-    users = load_users()
-    return render_template('admin.html', users=users)
+def authenticate():
+    return Response('Unauthorized', 401, {'WWW-Authenticate': 'Basic realm="Login Required"'})
+
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth = request.authorization
+        if not auth or not check_auth(auth.password):
+            return authenticate()
+        return f(*args, **kwargs)
+    return decorated
+
+@app.route('/admin')
+@requires_auth
+def admin():
+    if os.path.exists(WITHDRAWALS_FILE):
+        with open(WITHDRAWALS_FILE) as f:
+            data = json.load(f)
+    else:
+        data = []
+    return jsonify(data)
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)

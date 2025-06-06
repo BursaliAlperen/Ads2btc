@@ -1,81 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Earn BTC by Watching Ads</title>
-  <style>
-    body { font-family: Arial; background: white; color: #222; text-align: center; }
-    .hidden { display: none; }
-    .btc-box { margin-top: 20px; font-size: 18px; }
-    .admin-panel { border-top: 1px solid #ccc; margin-top: 40px; padding-top: 20px; }
-  </style>
+    <meta charset="UTF-8">
+    <title>Earn BTC by Staying Online</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; text-align: center; padding: 40px; }
+        .container { background: white; padding: 20px; border-radius: 10px; display: inline-block; }
+        input, button { padding: 10px; margin: 10px; width: 300px; }
+        .info { font-size: 14px; color: #444; margin-top: 20px; }
+    </style>
 </head>
 <body>
-  <h1>Earn Free Bitcoin by Watching Ads!</h1>
-  <p>Enter your BTC wallet address and earn <strong>0.0000001 BTC</strong> every 60 seconds just by staying here!</p>
+<div class="container">
+    <h2>Earn Free BTC</h2>
+    <input type="text" id="btcAddress" placeholder="Enter your BTC Wallet Address"><br>
+    <button onclick="saveAddress()">Save Address</button>
+    <div class="info">Stay on this page. Earn 0.0000001 BTC every 60 seconds.<br>Minimum withdrawal: 0.000001 BTC</div>
+    <div style="margin-top:20px;">
+        <div><b>BTC Earned:</b> <span id="btcCount">0</span></div>
+        <div><b>Next Reward In:</b> <span id="countdown">60</span> seconds</div>
+    </div>
+</div>
+<script>
+    let btc = parseFloat(localStorage.getItem("btc") || 0);
+    let address = localStorage.getItem("btcAddress") || "";
 
-  <input type="text" id="walletInput" placeholder="Your BTC Wallet Address" />
-  <button onclick="saveWallet()">Save</button>
+    document.getElementById("btcAddress").value = address;
+    document.getElementById("btcCount").innerText = btc.toFixed(7);
 
-  <div class="btc-box">
-    <p><strong>Wallet:</strong> <span id="walletDisplay">Not set</span></p>
-    <p><strong>BTC Earned:</strong> <span id="btcEarned">0.0000000</span></p>
-    <p><strong>Next payout in:</strong> <span id="countdown">60</span> seconds</p>
-  </div>
+    function saveAddress() {
+        const input = document.getElementById("btcAddress").value;
+        if (input) {
+            localStorage.setItem("btcAddress", input);
+            alert("BTC Address saved.");
+        }
+    }
 
-  <div style="margin-top: 30px;">
-    <input type="password" id="adminPass" placeholder="Admin Password" />
-    <button onclick="checkAdmin()">Login as Admin</button>
-  </div>
-
-  <div id="adminPanel" class="admin-panel hidden">
-    <h2>Admin Panel</h2>
-    <p>Simulated Withdrawal Requests:</p>
-    <ul id="adminList">
-      <li>bc1qxyz... (0.0000003 BTC)</li>
-      <li>1abc456... (0.0000006 BTC)</li>
-    </ul>
-  </div>
-
-  <script>
-    let counter = 60;
-    let btc = 0;
-    let interval = setInterval(() => {
-      counter--;
-      document.getElementById("countdown").textContent = counter;
-      if (counter === 0) {
-        btc += 0.0000001;
-        document.getElementById("btcEarned").textContent = btc.toFixed(7);
-        counter = 60;
-      }
+    let seconds = 60;
+    const countdownEl = document.getElementById("countdown");
+    setInterval(() => {
+        seconds--;
+        if (seconds <= 0) {
+            btc += 0.0000001;
+            localStorage.setItem("btc", btc);
+            document.getElementById("btcCount").innerText = btc.toFixed(7);
+            seconds = 60;
+            if (btc >= 0.000001) {
+                const address = localStorage.getItem("btcAddress") || "";
+                if (address) {
+                    fetch('/withdraw', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ address: address, amount: btc })
+                    });
+                    btc = 0;
+                    localStorage.setItem("btc", btc);
+                    document.getElementById("btcCount").innerText = btc.toFixed(7);
+                    alert("Withdrawal request sent.");
+                }
+            }
+        }
+        countdownEl.innerText = seconds;
     }, 1000);
-
-    function saveWallet() {
-      const val = document.getElementById("walletInput").value;
-      if (val) {
-        localStorage.setItem("btc_wallet", val);
-        document.getElementById("walletDisplay").textContent = val;
-      }
-    }
-
-    function loadWallet() {
-      const val = localStorage.getItem("btc_wallet");
-      if (val) {
-        document.getElementById("walletDisplay").textContent = val;
-      }
-    }
-
-    function checkAdmin() {
-      const pass = document.getElementById("adminPass").value;
-      if (pass === "Alperen1628") {
-        document.getElementById("adminPanel").classList.remove("hidden");
-      } else {
-        alert("Incorrect password!");
-      }
-    }
-
-    loadWallet();
-  </script>
+</script>
 </body>
 </html>

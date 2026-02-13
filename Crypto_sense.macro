@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<data>
+    <macro name="Crypto Sense Süresiz AFK">
+        <trigger>
+            <app_launched package="com.crypto.sense" />
+        </trigger>
+        <variable name="reklam" type="boolean" value="false" />
+        <variable name="delay" type="integer" value="0" />
+        <action>
+            <while_loop>
+                <condition_block>
+                    <condition type="always_true" />
+                </condition_block>
+                <actions>
+                    <if_condition>
+                        <condition type="pixel_color" x="680" y="120" color="-1" tolerance="45" />
+                        <actions>
+                            <set_variable name="reklam" value="true" />
+                            <wait ms="3000" />
+                            <ui_interaction type="back_button" />
+                            <wait ms="1000" />
+                            <touch x="680" y="120" />
+                            <wait ms="1000" />
+                            <set_variable name="reklam" value="false" />
+                        </actions>
+                    </if_condition>
+
+                    <touch x="500" y="700" />
+                    <wait ms="800" />
+
+                    <if_condition>
+                        <condition type="variable" name="reklam" value="false" />
+                        <actions>
+                            <set_variable_random name="delay" min="100" max="220" />
+                            
+                            <touch x="200" y="400" /> <wait ms="delay" />
+                            <touch x="360" y="400" /> <wait ms="delay" />
+                            <touch x="520" y="400" /> <wait ms="delay" />
+                            
+                            <touch x="200" y="750" /> <wait ms="delay" />
+                            <touch x="360" y="750" /> <wait ms="delay" />
+                            <touch x="520" y="750" /> <wait ms="delay" />
+                            
+                            <touch x="200" y="1100" /> <wait ms="delay" />
+                            <touch x="360" y="1100" /> <wait ms="delay" />
+                            <touch x="520" y="1100" /> <wait ms="delay" />
+
+                            <touch x="360" y="900" /> <wait ms="100" />
+                        </actions>
+                    </if_condition>
+
+                    <wait ms="200" />
+                </actions>
+            </while_loop>
+        </action>
+    </macro>
+</data>

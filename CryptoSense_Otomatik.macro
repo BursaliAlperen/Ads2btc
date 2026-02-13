@@ -2,36 +2,53 @@
   {
     "m_actionList": [
       {
+        "m_constraintList": [],
+        "m_isExpanded": true,
         "m_method": 0,
         "m_xLocation": 685,
         "m_yLocation": 115,
+        "m_id": 112,
         "m_type": "UIInteractionAction"
       },
       {
         "m_millis": 400,
+        "m_id": 113,
         "m_type": "WaitAction"
       },
       {
         "m_actionList": [
-          { "m_xLocation": 180, "m_yLocation": 420, "m_type": "UIInteractionAction" },
-          { "m_millis": 120, "m_type": "WaitAction" },
-          { "m_xLocation": 360, "m_yLocation": 420, "m_type": "UIInteractionAction" },
-          { "m_xLocation": 540, "m_yLocation": 420, "m_type": "UIInteractionAction" },
-          { "m_xLocation": 180, "m_yLocation": 760, "m_type": "UIInteractionAction" },
-          { "m_xLocation": 360, "m_yLocation": 760, "m_type": "UIInteractionAction" },
-          { "m_xLocation": 540, "m_yLocation": 760, "m_type": "UIInteractionAction" }
+          { "m_xLocation": 180, "m_yLocation": 420, "m_id": 114, "m_type": "UIInteractionAction" },
+          { "m_xLocation": 360, "m_yLocation": 420, "m_id": 115, "m_type": "UIInteractionAction" },
+          { "m_xLocation": 540, "m_yLocation": 420, "m_id": 116, "m_type": "UIInteractionAction" },
+          { "m_xLocation": 180, "m_yLocation": 760, "m_id": 117, "m_type": "UIInteractionAction" },
+          { "m_xLocation": 360, "m_yLocation": 760, "m_id": 118, "m_type": "UIInteractionAction" },
+          { "m_xLocation": 540, "m_yLocation": 760, "m_id": 119, "m_type": "UIInteractionAction" },
+          { "m_xLocation": 180, "m_yLocation": 1100, "m_id": 120, "m_type": "UIInteractionAction" },
+          { "m_xLocation": 360, "m_yLocation": 1100, "m_id": 121, "m_type": "UIInteractionAction" },
+          { "m_xLocation": 540, "m_yLocation": 1100, "m_id": 122, "m_type": "UIInteractionAction" }
         ],
         "m_repeatCount": 15,
+        "m_id": 123,
         "m_type": "RepeatAction"
       }
     ],
+    "m_constraintList": [],
+    "m_enabled": true,
+    "m_isExpanded": true,
+    "m_name": "Crypto Sense Full Pro",
     "m_triggerList": [
       {
-        "m_packageName": "com.crypto.sense",
+        "m_applicationOptions": [
+          {
+            "m_packageName": "com.crypto.sense",
+            "m_applicationName": "Crypto Sense"
+          }
+        ],
+        "m_id": 124,
         "m_type": "ApplicationLaunchedTrigger"
       }
     ],
-    "m_name": "Crypto Sense Fix",
-    "m_enabled": true
+    "m_GUID": -8273645192837465,
+    "m_isDirty": true
   }
 ]

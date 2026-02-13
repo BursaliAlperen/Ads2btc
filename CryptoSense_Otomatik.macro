@@ -2,88 +2,36 @@
   {
     "m_actionList": [
       {
+        "m_method": 0,
+        "m_xLocation": 685,
+        "m_yLocation": 115,
+        "m_type": "UIInteractionAction"
+      },
+      {
+        "m_millis": 400,
+        "m_type": "WaitAction"
+      },
+      {
         "m_actionList": [
-          {
-            "m_constraintList": [],
-            "m_isExpanded": true,
-            "m_type": "WhileLoopAction",
-            "m_condition": {
-              "m_type": "AlwaysTrueCondition"
-            },
-            "m_actionList": [
-              {
-                "m_type": "UIInteractionAction",
-                "m_method": 0,
-                "m_xLocation": 685,
-                "m_yLocation": 115
-              },
-              {
-                "m_type": "WaitAction",
-                "m_millis": 400
-              },
-              {
-                "m_type": "RepeatAction",
-                "m_repeatCount": 15,
-                "m_actionList": [
-                  {
-                    "m_type": "SetVariableAction",
-                    "m_variableName": "hizli_gecis",
-                    "m_minValue": 80,
-                    "m_maxValue": 160
-                  },
-                  { "m_type": "UIInteractionAction", "m_xLocation": 180, "m_yLocation": 420 },
-                  { "m_type": "WaitAction", "m_variableName": "hizli_gecis" },
-                  { "m_type": "UIInteractionAction", "m_xLocation": 360, "m_yLocation": 420 },
-                  { "m_type": "WaitAction", "m_variableName": "hizli_gecis" },
-                  { "m_type": "UIInteractionAction", "m_xLocation": 540, "m_yLocation": 420 },
-                  { "m_type": "UIInteractionAction", "m_xLocation": 180, "m_yLocation": 760 },
-                  { "m_type": "UIInteractionAction", "m_xLocation": 360, "m_yLocation": 760 },
-                  { "m_type": "UIInteractionAction", "m_xLocation": 540, "m_yLocation": 760 },
-                  { "m_type": "UIInteractionAction", "m_xLocation": 180, "m_yLocation": 1100 },
-                  { "m_type": "UIInteractionAction", "m_xLocation": 360, "m_yLocation": 1100 },
-                  { "m_type": "UIInteractionAction", "m_xLocation": 540, "m_yLocation": 1100 },
-                  {
-                    "m_type": "IfConditionAction",
-                    "m_condition": {
-                      "m_type": "PixelColorCondition",
-                      "m_xLocation": 680,
-                      "m_yLocation": 120,
-                      "m_color": -1,
-                      "m_tolerance": 30
-                    },
-                    "m_actionList": [
-                      { "m_type": "WaitAction", "m_millis": 500 },
-                      { "m_type": "BreakLoopAction" }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
+          { "m_xLocation": 180, "m_yLocation": 420, "m_type": "UIInteractionAction" },
+          { "m_millis": 120, "m_type": "WaitAction" },
+          { "m_xLocation": 360, "m_yLocation": 420, "m_type": "UIInteractionAction" },
+          { "m_xLocation": 540, "m_yLocation": 420, "m_type": "UIInteractionAction" },
+          { "m_xLocation": 180, "m_yLocation": 760, "m_type": "UIInteractionAction" },
+          { "m_xLocation": 360, "m_yLocation": 760, "m_type": "UIInteractionAction" },
+          { "m_xLocation": 540, "m_yLocation": 760, "m_type": "UIInteractionAction" }
         ],
-        "m_type": "ParentAction"
+        "m_repeatCount": 15,
+        "m_type": "RepeatAction"
       }
     ],
     "m_triggerList": [
       {
-        "m_applicationOptions": [
-          {
-            "m_packageName": "com.crypto.sense",
-            "m_applicationName": "Crypto Sense"
-          }
-        ],
+        "m_packageName": "com.crypto.sense",
         "m_type": "ApplicationLaunchedTrigger"
       }
     ],
-    "m_localVariables": [
-      {
-        "m_name": "hizli_gecis",
-        "m_type": 1,
-        "m_intVariable": 100
-      }
-    ],
-    "m_name": "Crypto Sense Pro Bot",
-    "m_enabled": true,
-    "m_isExpanded": true
+    "m_name": "Crypto Sense Fix",
+    "m_enabled": true
   }
 ]
